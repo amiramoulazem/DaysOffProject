@@ -1,27 +1,16 @@
-import * as yup from "yup";
-
 import { Link } from "react-router-dom";
 import { Notyf } from "notyf";
 import React from "react";
+import registrationSchema from "../schema-validation/registration-schema"
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-const schema = yup.object().shape({
-  firstName: yup.string().required(),
-  lastName: yup.string().required(),
-  email: yup.string().required(),
-  password: yup.string().required(),
-  repeatedPassword: yup
-    .string()
-    .required("password confirmation is required ")
-    .oneOf([yup.ref("password"), null], "password does not match"),
-});
 const Register = () => {
   const history = useHistory();
   /* GETTING DATA */
   const { register, handleSubmit, errors } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(registrationSchema),
   });
   const notyf = new Notyf({
     duration: 2000,
@@ -63,10 +52,10 @@ const Register = () => {
                   ref={register}
                 />
                 {errors.firstName && (
-                  <div class="alert alert-danger" role="alert">
-                    <div class="d-flex">
+                  <div className="alert alert-danger" role="alert">
+                    <div className="d-flex">
                       <div>
-                        <div class="text-muted">
+                        <div className="text-muted">
                           {" "}
                           {errors.firstName?.message}
                         </div>
@@ -85,10 +74,10 @@ const Register = () => {
                   ref={register}
                 />
                 {errors.lastName && (
-                  <div class="alert alert-danger" role="alert">
-                    <div class="d-flex">
+                  <div className="alert alert-danger" role="alert">
+                    <div className="d-flex">
                       <div>
-                        <div class="text-muted">
+                        <div className="text-muted">
                           {" "}
                           {errors.lastName?.message}
                         </div>
@@ -107,10 +96,10 @@ const Register = () => {
                   ref={register}
                 />
                 {errors.email && (
-                  <div class="alert alert-danger" role="alert">
-                    <div class="d-flex">
+                  <div className="alert alert-danger" role="alert">
+                    <div className="d-flex">
                       <div>
-                        <div class="text-muted"> {errors.email?.message}</div>
+                        <div className="text-muted"> {errors.email?.message}</div>
                       </div>
                     </div>
                   </div>
@@ -126,10 +115,10 @@ const Register = () => {
                   ref={register}
                 />
                 {errors.password && (
-                  <div class="alert alert-danger" role="alert">
-                    <div class="d-flex">
+                  <div className="alert alert-danger" role="alert">
+                    <div className="d-flex">
                       <div>
-                        <div class="text-muted">
+                        <div className="text-muted">
                           {" "}
                           {errors.password?.message}
                         </div>
@@ -148,10 +137,10 @@ const Register = () => {
                   ref={register}
                 />
                 {errors.repeatedPassword && (
-                  <div class="alert alert-danger" role="alert">
-                    <div class="d-flex">
+                  <div className="alert alert-danger" role="alert">
+                    <div className="d-flex">
                       <div>
-                        <div class="text-muted">
+                        <div className="text-muted">
                           {errors.repeatedPassword?.message}
                         </div>
                       </div>

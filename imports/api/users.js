@@ -1,4 +1,5 @@
 import { Meteor } from "meteor/meteor";
+import registrationSchema from "../schema-validation/registration-schema"
 
 /*PUBLISHING ROLES  */
 Meteor.publish(null, function () {
@@ -10,14 +11,18 @@ Meteor.publish(null, function () {
   });
   Meteor.methods({
   
-    addUserToDB(user) {
+    async addUserToDB (data){
       /* add user to role */
       let id;
-  
+      try {
+        await registrationSchema.validate(data)
+      }catch (e){
+        throw new Meteor.Error(e.message);
+      }
       id = Accounts.createUser({
-        email: user.email,
-        password: user.password,
-        profile: { firstName: user.firstName, lastName: user.lastName },
+        email: data.email,
+        password: data.password,
+        profile: { firstName: data.firstName, lastName: data.lastName },
       });
       Roles.createRole("user", { unlessExists: true });
       Roles.addUsersToRoles(id, "user");
