@@ -57,10 +57,10 @@ function Login() {
                     ref={register}
                   />
                   {errors.email && (
-                    <div class="alert alert-danger" role="alert">
-                      <div class="d-flex">
+                    <div className="alert alert-danger" role="alert">
+                      <div className="d-flex">
                         <div>
-                          <div class="text-muted"> {errors.email?.message}</div>
+                          <div className="text-muted"> {errors.email?.message}</div>
                         </div>
                       </div>
                     </div>
@@ -75,10 +75,10 @@ function Login() {
                       ref={register}
                     />
                     {errors.password && (
-                      <div class="alert alert-danger" role="alert">
-                        <div class="d-flex">
+                      <div className="alert alert-danger" role="alert">
+                        <div className="d-flex">
                           <div>
-                            <div class="text-muted">
+                            <div className="text-muted">
                               {errors.password?.message}
                             </div>
                           </div>

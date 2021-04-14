@@ -1,4 +1,7 @@
 @import './tabler.min.css';
+@import 'notyf/notyf.min.css'; 
+/*  @import 'react-date-range/dist/styles.css';
+@import 'react-date-range/dist/theme/default.css';  */
 /* body {
   padding: 10px;
   font-family: sans-serif;
