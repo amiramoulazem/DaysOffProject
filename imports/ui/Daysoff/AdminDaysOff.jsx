@@ -12,19 +12,32 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 const AdminDaysOff = () => {
-  const { register, handleSubmit } = useForm({
+  const { register, handleSubmit, err } = useForm({
     resolver: yupResolver(dateschema),
   });
   const [period, setPeriod] = useState([]);
   const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-  const [message, setMessage] = useState([]);
-  const [validation, setValidation] = useState([]);
+  const [modalState, setModalState] = useState(
+    "modal-one" | "modal-two" | ("close" > "close")
+  );
+  const handleShowModalOne = () => setModalState("modal-one");
+  const handleShowModalTwo = () => setModalState("modal-two");
+  const handleClose = () => setModalState("close");
+
   const logOut = () => {
     Accounts.logout();
   };
-
+  const handleAccept = () => {
+    console.log("here");
+    Meteor.call("acceptDayOff", (_id) => {
+      fetch();
+    });
+  };
+  const handleReject = () => {
+    Meteor.call("rejectDaysOff", (_id) => {
+      fetch();
+    });
+  };
   const fetch = () => {
     Meteor.call("readPeriod", (err, res) => {
       setPeriod(res);
@@ -33,14 +46,6 @@ const AdminDaysOff = () => {
   useEffect(() => {
     fetch();
   }, []);
-  const daysoffValidation = (data) => {
- 
-    Meteor.call("daysoffValidation", {data}, (err, res) => {
-      console.log(data)
-      fetch();
-      setShow(false);
-    });
-  };
 
   return (
     <div>
@@ -78,8 +83,7 @@ const AdminDaysOff = () => {
               className="nav-link active"
               data-bs-toggle="tab"
             >
-              {" "}
-              Calendar{" "}
+              Calendar
             </a>
           </li>
           <li className="nav-item">
@@ -128,6 +132,7 @@ const AdminDaysOff = () => {
                       <th> User Name </th>
                       <th> Reason </th>
                       <th></th>
+                      <th></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -142,13 +147,26 @@ const AdminDaysOff = () => {
                           </>
                         );
                       })}
+
                       <td>
                         <div className="d-flex justify-content-center">
                           <button
-                            className="btn btn-info "
-                            onClick={handleShow}
+                            form="request"
+                            className="btn btn-success"
+                            onClick={handleShowModalOne}
                           >
-                            Respond
+                            Accept
+                          </button>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="d-flex justify-content-center">
+                          <button
+                            form="request"
+                            className="btn btn-danger"
+                            onClick={handleShowModalTwo}
+                          >
+                            Reject
                           </button>
                         </div>
                       </td>
@@ -161,15 +179,15 @@ const AdminDaysOff = () => {
         </div>
       </div>
 
-      <Modal show={show}>
+      <Modal show={modalState === "modal-one"}>
         <Modal.Header>
-          <Modal.Title> Request </Modal.Title>
+          <Modal.Title> Acceptation Response : </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <form
-            onSubmit={handleSubmit(daysoffValidation())}
+            onSubmit={handleSubmit(handleAccept)}
             className="form-group row"
-            id="request"
+            id="acceptationResponse"
           >
             <label className="form-label">message : </label>
             <input
@@ -178,27 +196,49 @@ const AdminDaysOff = () => {
               name="reason"
               className="form-control form-control-rounded mb-2"
             />
-             <button>save</button>
           </form>
-         
         </Modal.Body>
         <Modal.Footer>
-          <div className="row justify-content-between">
-            <div className="col-auto">
-              <button className="btn btn-light" onClick={handleClose}>
-                close
-              </button>
-            </div>
-            <div className="col-auto">
-              <div className="btn-group">
-                <button  form="request" className="btn btn-danger">
-                  Reject
-                </button>
-                <button form="request" className="btn btn-success">
-                  Accept
-                </button>
-              </div>
-            </div>
+          <div >
+            <button className="btn btn-secondary btn btn-light" onClick={handleClose}>
+              close
+            </button>
+
+            <button form="acceptationResponse" className="btn btn-primary btn btn-info">
+              Send
+            </button>
+          </div>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={modalState === "modal-two"}>
+        <Modal.Header>
+          <Modal.Title> Rejection Response : </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <form
+            onSubmit={handleSubmit(handleReject)}
+            className="form-group row"
+            id="rejectionResponse"
+          >
+            <label className="form-label">message : </label>
+            <input
+              ref={register}
+              type="text"
+              name="reason"
+              className="form-control form-control-rounded mb-2"
+            />
+          </form>
+        </Modal.Body>
+        <Modal.Footer>
+          <div >
+            <button className="btn btn-light" onClick={handleClose}>
+              close
+            </button>
+
+            <button form="rejectionResponse" className="btn btn-info">
+              Send
+            </button>
           </div>
         </Modal.Footer>
       </Modal>

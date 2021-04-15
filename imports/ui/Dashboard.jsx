@@ -17,22 +17,19 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="container">
-      <header className="navbar navbar-dark">
+    <div>
+      <div className="navbar navbar-dark">
         <div className="container-xl">
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbar-menu"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
+          <div className="navbar-nav flex-row order-md-last">
+            <ul className="navbar-nav">
+              <li className="nav-item"></li>
+            </ul>
+          </div>
+          <div className="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
+            <button onClick={logOut}>LogOut</button>
+          </div>
         </div>
-        <div className="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
-          <button onClick={logOut}>LogOut</button>
-        </div>
-      </header>
+      </div>
 
       <div className="row justify-content-center align-items-center h-50 p-5">
         <div className="col-md-9">
@@ -41,10 +38,7 @@ const Dashboard = () => {
               <div className="card">
                 <div className="card-status-start bg-green"></div>
                 <div className="card-header">
-                  <div className="card-title text-center">
-                    
-                    Wekan Dashboard
-                  </div>
+                  <div className="card-title text-center">Wekan Dashboard</div>
                 </div>
                 <div className="card-body text-center"> user tasks </div>
                 <div className="card-footer text-center">

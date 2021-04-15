@@ -126,7 +126,7 @@ const DaysOff = () => {
           </form>
         </Modal.Body>
         <Modal.Footer>
-          <button className="btn btn-outline-danger" form="dates" variant="secondary" onClick={handleClose}>
+          <button className="btn btn-outline-danger" variant="secondary" onClick={handleClose}>
             Close
           </button>
           <button className="btn btn-outline-success" variant="primary" form="dates">

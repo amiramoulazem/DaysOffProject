@@ -25,17 +25,17 @@ const readPeriod = function () {
 const deletePeriodRequest = function (_id) {
   Daysoff.remove({ _id, userId: this.userId });
 };
-const daysoffValidation = function ({id , update}){
-  const days= Daysoff.findOne({_id: id, userId: this.userId });
-  if (!days) {
-    throw new Meteor.Error("period not found");
-  }
-  Daysoff.update({ _id: id }, { $set: update });
-};
 
+const acceptDayOff = (_id)=>{
+  Daysoff.update({_id},{$set:{response:true}})
+}
+const rejectDayOff = ({_id,message})=>{
+  Daysoff.update({_id},{$set:{response:false,message}})
+}
 Meteor.methods({
   createPeriod,
   readPeriod,
   deletePeriodRequest,
-  daysoffValidation
+  acceptDayOff,
+  rejectDayOff
 });
