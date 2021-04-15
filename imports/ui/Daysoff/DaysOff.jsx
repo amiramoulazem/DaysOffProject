@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import FullCalendar from "@fullcalendar/react";
 import Modal from "react-bootstrap/Modal";
 import dateschema from "../../schema-validation/daysoff-schema";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import daysoff from "../../api/daysoff";
+import { faBell } from '@fortawesome/free-solid-svg-icons'
 import interactionPlugin from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -20,7 +22,7 @@ const DaysOff = () => {
   const [date, setDate] = useState("");
   const [finalDate, setFinalDate] = useState("");
   const [show, setShow] = useState(false);
-  
+
   handleDateClick = (DateClickInfo) => {
     setDate(DateClickInfo.dateStr);
     setFinalDate(DateClickInfo.dateStr);
@@ -37,8 +39,7 @@ const DaysOff = () => {
       calendar.addEvent({
         start: DateSelectInfo.startStr,
         end: DateSelectInfo.endStr,
-      /*   allDay: DateSelectInfo.allDay, */
-     
+        /*   allDay: DateSelectInfo.allDay, */
       });
     } /* , */
   };
@@ -54,18 +55,31 @@ const DaysOff = () => {
   const fetch = () => {
     Meteor.call("readPeriod", (err, data) => {
       setPeriod(data);
-     
     });
   };
   useEffect(() => {
     fetch();
   }, []);
   return (
-    <div className="container">
+    <div>
+      <div className="navbar navbar-dark">
+        <div className="container-xl">
+          <div className="navbar-nav flex-row order-md-last">
+            <ul className="navbar-nav">
+              <li className="nav-item"></li>
+            </ul>
+          </div>
+          <div className="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
+           
+            <FontAwesomeIcon icon={faBell} onClick={console.log("notification clicked")} />
+          </div>
+        </div>
+      </div>
       {/*  {Meteor.user()?.profile
         ? notyfone.success({ message: Meteor.user()?.profile?.firstName })
         : notyfone.success({ message: Meteor.user()?.username })} */}
-      <FullCalendar
+     <div className="container h-50">
+     <FullCalendar
         initialView="dayGridMonth"
         plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
         selectable={true}
@@ -76,19 +90,22 @@ const DaysOff = () => {
           right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
         }}
         dateClick={handleDateClick}
-        events={period.map(({data})=>({title:data.description,start:data.startdate,end:data.enddate}))}
+        events={period.map(({ data }) => ({
+          title: data.description,
+          start: data.startdate,
+          end: data.enddate,
+        }))}
         select={handleDateSelect}
-       
         dayMaxEventRows={true} // for all non-TimeGrid views
         views={
           (timeGrid = {
             dayMaxEventRows: 4, // adjust to 4 only for timeGridWeek/timeGridDay
           })
         }
-       eventDisplay='auto' 
-     
-        
+        eventDisplay="auto"
       />
+       
+     </div>
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header>
@@ -126,10 +143,18 @@ const DaysOff = () => {
           </form>
         </Modal.Body>
         <Modal.Footer>
-          <button className="btn btn-outline-danger" variant="secondary" onClick={handleClose}>
+          <button
+            className="btn btn-outline-danger"
+            variant="secondary"
+            onClick={handleClose}
+          >
             Close
           </button>
-          <button className="btn btn-outline-success" variant="primary" form="dates">
+          <button
+            className="btn btn-outline-success"
+            variant="primary"
+            form="dates"
+          >
             Save Changes
           </button>
         </Modal.Footer>

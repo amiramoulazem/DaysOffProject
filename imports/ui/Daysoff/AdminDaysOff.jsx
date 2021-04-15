@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState }  from "react";
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import FullCalendar from "@fullcalendar/react";
 import { Meteor } from "meteor/meteor";
 import Modal from "react-bootstrap/Modal";
 import dateschema from "../../schema-validation/daysoff-schema";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import { ioMdLogOut } from '@fortawesome/free-solid-svg-icons'
 import listPlugin from "@fullcalendar/list";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { useForm } from "react-hook-form";
+import {useHistory} from "react-router-dom"
 import { yupResolver } from "@hookform/resolvers/yup";
 
 const AdminDaysOff = () => {
@@ -16,17 +19,17 @@ const AdminDaysOff = () => {
     resolver: yupResolver(dateschema),
   });
   const [period, setPeriod] = useState([]);
-  const [show, setShow] = useState(false);
+
   const [modalState, setModalState] = useState(
     "modal-one" | "modal-two" | ("close" > "close")
   );
   const handleShowModalOne = () => setModalState("modal-one");
   const handleShowModalTwo = () => setModalState("modal-two");
   const handleClose = () => setModalState("close");
-
+  history = useHistory();
   const logOut = () => {
     Accounts.logout();
-  };
+    };
   const handleAccept = () => {
     console.log("here");
     Meteor.call("acceptDayOff", (_id) => {
@@ -58,20 +61,16 @@ const AdminDaysOff = () => {
               </a>
             </li>
           </ul>
-          <ul className="navbar-nav">
-            <li className="nav-item">
-              <a className="nav-link">
-                <span className="nav-link-title">Calendar</span>
-              </a>
-            </li>
-          </ul>
           <div className="navbar-nav flex-row order-md-last">
             <ul className="navbar-nav">
               <li className="nav-item"></li>
             </ul>
           </div>
           <div className="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
-            <button onClick={logOut}>LogOut</button>
+            {/* <button className="btn btn-light" onClick={logOut}>LogOut</button> */}
+            <button type="button" className="btn btn-default btn-sm" onClick={logOut}>
+          <span className="glyphicon glyphicon-log-out"></span> Log out
+        </button>
           </div>
         </div>
       </div>
@@ -96,7 +95,8 @@ const AdminDaysOff = () => {
           <div className="tab-content">
             <div className="tab-pane active show" id="calendar">
               <div>
-                <FullCalendar
+                <div className="container">
+                  <FullCalendar
                   initialView="dayGridMonth"
                   plugins={[
                     dayGridPlugin,
@@ -122,6 +122,7 @@ const AdminDaysOff = () => {
                     })
                   }
                 />
+                </div>
               </div>
             </div>
             <div className="tab-pane active" id="req">
@@ -199,12 +200,18 @@ const AdminDaysOff = () => {
           </form>
         </Modal.Body>
         <Modal.Footer>
-          <div >
-            <button className="btn btn-secondary btn btn-light" onClick={handleClose}>
+          <div>
+            <button
+              className="btn btn-secondary btn btn-light"
+              onClick={handleClose}
+            >
               close
             </button>
 
-            <button form="acceptationResponse" className="btn btn-primary btn btn-info">
+            <button
+              form="acceptationResponse"
+              className="btn btn-primary btn btn-info"
+            >
               Send
             </button>
           </div>
@@ -231,7 +238,7 @@ const AdminDaysOff = () => {
           </form>
         </Modal.Body>
         <Modal.Footer>
-          <div >
+          <div>
             <button className="btn btn-light" onClick={handleClose}>
               close
             </button>
