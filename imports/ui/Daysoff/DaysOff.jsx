@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Notyf } from "notyf";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import FullCalendar from "@fullcalendar/react";
 import Modal from "react-bootstrap/Modal";
 import dateschema from "../../schema-validation/daysoff-schema";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import daysoff from "../../api/daysoff";
-import { faBell } from '@fortawesome/free-solid-svg-icons'
+import { faBell } from "@fortawesome/free-solid-svg-icons";
 import interactionPlugin from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -14,6 +14,15 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 const DaysOff = () => {
+  const notyf = new Notyf({
+    duration: 2000,
+    position: {
+      x: "center",
+      y: "top",
+    },
+  });
+
+
   const { register, handleSubmit } = useForm({
     resolver: yupResolver(dateschema),
   });
@@ -39,9 +48,9 @@ const DaysOff = () => {
       calendar.addEvent({
         start: DateSelectInfo.startStr,
         end: DateSelectInfo.endStr,
-        /*   allDay: DateSelectInfo.allDay, */
+       allDay: DateSelectInfo.allDay,
       });
-    } /* , */
+    } 
   };
 
   const onSubmit = (data) => {
@@ -70,42 +79,50 @@ const DaysOff = () => {
             </ul>
           </div>
           <div className="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
-           
-            <FontAwesomeIcon icon={faBell} onClick={console.log("notification clicked")} />
+            <div className="dropdown">
+            <FontAwesomeIcon
+              icon={faBell}
+              onClick={() => console.log("notification clicked")}
+            />
+            </div>
           </div>
         </div>
       </div>
-      {/*  {Meteor.user()?.profile
-        ? notyfone.success({ message: Meteor.user()?.profile?.firstName })
-        : notyfone.success({ message: Meteor.user()?.username })} */}
-     <div className="container h-50">
-     <FullCalendar
-        initialView="dayGridMonth"
-        plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
-        selectable={true}
-        editable={true}
-        headerToolbar={{
-          left: "prev,next today",
-          center: "title",
-          right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
-        }}
-        dateClick={handleDateClick}
-        events={period.map(({ data }) => ({
-          title: data.description,
-          start: data.startdate,
-          end: data.enddate,
-        }))}
-        select={handleDateSelect}
-        dayMaxEventRows={true} // for all non-TimeGrid views
-        views={
-          (timeGrid = {
-            dayMaxEventRows: 4, // adjust to 4 only for timeGridWeek/timeGridDay
-          })
-        }
-        eventDisplay="auto"
-      />
-       
-     </div>
+      {Meteor.user()?.profile
+        ? notyf.success({ message: Meteor.user()?.profile?.firstName })
+        : notyf.success({ message: Meteor.user()?.username })}
+      <div className="container h-50">
+        <FullCalendar
+          initialView="dayGridMonth"
+          plugins={[
+            dayGridPlugin,
+            timeGridPlugin,
+            listPlugin,
+            interactionPlugin,
+          ]}
+          selectable={true}
+          editable={true}
+          headerToolbar={{
+            left: "prev,next today",
+            center: "title",
+            right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
+          }}
+          dateClick={handleDateClick}
+          events={period.map(({ data }) => ({
+            title: data.description,
+            start: data.startdate,
+            end: data.enddate,
+          }))}
+          select={handleDateSelect}
+          dayMaxEventRows={true} // for all non-TimeGrid views
+          views={
+            (timeGrid = {
+              dayMaxEventRows: 4, // adjust to 4 only for timeGridWeek/timeGridDay
+            })
+          }
+          eventDisplay="auto"
+        />
+      </div>
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header>

@@ -5,7 +5,7 @@ import { useTracker } from "meteor/react-meteor-data";
 
 const Authorized = ({ path, component }) => {
   const user = useTracker(() => Meteor.user());
-  const authenticatedPage = ["/dashboard" ,"/days-off" ,"/admin-days-off"];
+  const authenticatedPage = ["/dashboard" ,"/admin-days-off"];
   const unAuthenticatedPage = ["/", "/register"];
   const isAuthenticatedPage = authenticatedPage.includes(path);
   const isUnauthenticatedPage = unAuthenticatedPage.includes(path);

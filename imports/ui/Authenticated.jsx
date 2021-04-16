@@ -7,7 +7,7 @@ const Authenticated = ({ path, component }) => {
   const user = useTracker(() => Meteor.user());
   const loading = useTracker(() => Meteor.loggingIn());
   const history = useHistory();
-  const authenticatedPage = ["/dashboard","/days-off","/admin-days-off"];
+  const authenticatedPage = ["/dashboard","/admin-days-off"];
   const unAuthenticatedPage = ["/","/login", "/register"];
   const isAuthenticatedPage = authenticatedPage.includes(path);
   const isUnauthenticatedPage = unAuthenticatedPage.includes(path);
