@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Notyf } from "notyf";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import FullCalendar from "@fullcalendar/react";
 import Modal from "react-bootstrap/Modal";
-import dateschema from "../../schema-validation/daysoff-schema";
+import { Notyf } from "notyf";
+import { dateschema } from "../../schema-validation/daysoff-schema";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import daysoff from "../../api/daysoff";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
@@ -22,8 +23,7 @@ const DaysOff = () => {
     },
   });
 
-
-  const { register, handleSubmit } = useForm({
+  const { register, handleSubmit, err } = useForm({
     resolver: yupResolver(dateschema),
   });
   const [period, setPeriod] = useState([]);
@@ -40,23 +40,18 @@ const DaysOff = () => {
     console.log("Date: " + DateClickInfo.dateStr);
   };
   handleDateSelect = (DateSelectInfo) => {
+    console.log(DateSelectInfo);
     setDate(DateSelectInfo.startStr);
     setFinalDate(DateSelectInfo.endStr);
     setShow(true);
-    let calendar = DateSelectInfo.view.calendar;
-    if (onSubmit) {
-      calendar.addEvent({
-        start: DateSelectInfo.startStr,
-        end: DateSelectInfo.endStr,
-       allDay: DateSelectInfo.allDay,
-      });
-    } 
   };
 
   const onSubmit = (data) => {
+    console.log("here");
     Meteor.call("createPeriod", { data }, (e) => {
       if (!e) {
         setShow(false);
+        fetch();
       } else console.log("ERROR", e);
     });
   };
@@ -78,19 +73,47 @@ const DaysOff = () => {
               <li className="nav-item"></li>
             </ul>
           </div>
-          <div className="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
-            <div className="dropdown">
-            <FontAwesomeIcon
-              icon={faBell}
-              onClick={() => console.log("notification clicked")}
-            />
-            </div>
+          <a
+            className="nav-link dropdown-toggle waves-effect waves-light"
+            id="navbarDropdownMenuLink-5"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="true"
+          >
+            <span className="badge badge-danger ml-2"></span>
+
+            <FontAwesomeIcon icon={faBell} />
+          </a>
+          <div
+            className="dropdown-menu dropdown-menu-lg-right dropdown-secondary"
+            aria-labelledby="navbarDropdownMenuLink-5"
+          >
+            <a className="dropdown-item waves-effect waves-light" href="#">
+              Action <span className="badge badge-danger ml-2">4</span>
+            </a>
+            <a className="dropdown-item waves-effect waves-light" href="#">
+              Another action <span className="badge badge-danger ml-2">1</span>
+            </a>
+            <a className="dropdown-item waves-effect waves-light" href="#">
+              Something else here{" "}
+              <span className="badge badge-danger ml-2">4</span>
+            </a>
           </div>
         </div>
+        {/*  <ul className="navbar-nav ml-auto nav-flex-icons">
+          <li className="nav-item avatar dropdown">
+            <a className="nav-link dropdown-toggle waves-effect waves-light" id="navbarDropdownMenuLink-5" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              <span className="badge badge-danger ml-2">4</span>
+              <FontAwesomeIcon icon={faBell} />
+            </a>
+            <div className="dropdown-menu dropdown-menu-lg-right dropdown-secondary" aria-labelledby="navbarDropdownMenuLink-5">
+              <a className="dropdown-item waves-effect waves-light" href="#">Action <span className="badge badge-danger ml-2">4</span></a>
+              <a className="dropdown-item waves-effect waves-light" href="#">Another action <span className="badge badge-danger ml-2">1</span></a>
+              <a className="dropdown-item waves-effect waves-light" href="#">Something else here <span className="badge badge-danger ml-2">4</span></a>
+            </div>
+          </li>
+        </ul>  */}
       </div>
-      {Meteor.user()?.profile
-        ? notyf.success({ message: Meteor.user()?.profile?.firstName })
-        : notyf.success({ message: Meteor.user()?.username })}
       <div className="container h-50">
         <FullCalendar
           initialView="dayGridMonth"
@@ -112,7 +135,9 @@ const DaysOff = () => {
             title: data.description,
             start: data.startdate,
             end: data.enddate,
+            allDay: false,
           }))}
+          displayEventTime={false}
           select={handleDateSelect}
           dayMaxEventRows={true} // for all non-TimeGrid views
           views={
@@ -120,6 +145,7 @@ const DaysOff = () => {
               dayMaxEventRows: 4, // adjust to 4 only for timeGridWeek/timeGridDay
             })
           }
+          eventColor="purple"
           eventDisplay="auto"
         />
       </div>

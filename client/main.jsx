@@ -22,10 +22,11 @@ const Routes = () => {
         <Authorized path="/register" component={Register} />
         <Authenticated path="/dashboard" component={Dashboard} />
         <Authenticated path="/Wekan" component={WekanDashboard} />
-        <Route path="/days-off" component={DaysOff} />
-        <Route path="/admin-days-off" component={AdminDaysOff} />
+        <Authenticated path="/days-off" component={DaysOff} />
+        {/* { Roles.userIsInRole( Meteor.userId(), "admin")?} */}
+        <Authenticated path="/admin-days-off" component={AdminDaysOff} /> 
         <Authenticated path="/task-tracker" component={TaskTracker} />
-            <Authorized path="*" component={NotFound} />
+        <Authorized path="*" component={NotFound} />
       </Switch>
     </Router>
  )

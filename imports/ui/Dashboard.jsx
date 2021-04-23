@@ -22,7 +22,11 @@ const Dashboard = () => {
         <div className="container-xl">
           <div className="navbar-nav flex-row order-md-last">
             <ul className="navbar-nav">
-              <li className="nav-item"></li>
+              <li className="nav-item">
+                {Meteor.user() ? (
+                  <h3> welcome {Meteor.user()?.profile?.firstName}</h3>
+                ) : undefined}
+              </li>
             </ul>
           </div>
           <div className="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">

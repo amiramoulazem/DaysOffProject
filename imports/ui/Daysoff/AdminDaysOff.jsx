@@ -1,50 +1,26 @@
 import React, { useEffect, useState } from "react";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import FullCalendar from "@fullcalendar/react";
+import ListOfrequests from "./ListOfrequests";
 import { Meteor } from "meteor/meteor";
 import Modal from "react-bootstrap/Modal";
-import dateschema from "../../schema-validation/daysoff-schema";
+import ModalsComponent from "./ModalsComponent";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import daysoff from "../../api/daysoff";
 import interactionPlugin from "@fullcalendar/interaction";
-import { ioMdLogOut } from "@fortawesome/free-solid-svg-icons";
 import listPlugin from "@fullcalendar/list";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
-import { yupResolver } from "@hookform/resolvers/yup";
 
 const AdminDaysOff = () => {
-  const { register, handleSubmit, err } = useForm({
-    resolver: yupResolver(dateschema),
-  });
   const [period, setPeriod] = useState([]);
-
-  const [modalState, setModalState] = useState(
-    "modal-one" | "modal-two" | ("close" > "close")
-  );
-  const handleShowModalOne = () => setModalState("modal-one");
-  const handleShowModalTwo = () => setModalState("modal-two");
-  const handleClose = () => setModalState("close");
-
+  const [show, setShow] = useState(false);
+  const [eventDate, setEventDate] = [];
+  const handleClose = () => setShow(false);
   history = useHistory();
   const logOut = () => {
     Accounts.logout();
   };
 
-  const handleAccept = () => {
-    console.log("acc")
-    Meteor.call("acceptDaysOff", _id, () => {
-      fetch();
-    });
-  };
-  const handleReject = () => {
-    console.log("reject")
-    Meteor.call("rejectDayOff", _id, () => {
-      fetch();
-    });
-  };
   const fetch = () => {
     Meteor.call("readPeriod", (err, res) => {
       setPeriod(res);
@@ -53,6 +29,9 @@ const AdminDaysOff = () => {
   useEffect(() => {
     fetch();
   }, []);
+  const handleEventClick = (event) => {
+    setShow(true);
+  };
 
   return (
     <div>
@@ -71,7 +50,6 @@ const AdminDaysOff = () => {
             </ul>
           </div>
           <div className="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
-            {/* <button className="btn btn-light" onClick={logOut}>LogOut</button> */}
             <button
               type="button"
               className="btn btn-default btn-sm"
@@ -103,8 +81,9 @@ const AdminDaysOff = () => {
           <div className="tab-content">
             <div className="tab-pane active show" id="calendar">
               <div>
-                <div className="container">
+                <div className="container w-75 p-3 h-75">
                   <FullCalendar
+                    editable={true}
                     initialView="dayGridMonth"
                     plugins={[
                       dayGridPlugin,
@@ -112,12 +91,15 @@ const AdminDaysOff = () => {
                       listPlugin,
                       interactionPlugin,
                     ]}
+                    displayEventTime={false}
                     events={period.map(({ data }) => ({
-                      groupId: data.userId,
                       title: data.description,
                       start: data.startdate,
                       end: data.enddate,
+                      allDay: false,
+                      extendedProps: data,
                     }))}
+                    eventClick={handleEventClick}
                     headerToolbar={{
                       left: "prev,next today",
                       center: "title",
@@ -130,6 +112,31 @@ const AdminDaysOff = () => {
                       })
                     }
                   />
+                  <Modal show={show}>
+                    <Modal.Header>
+                      <Modal.Title> more informations </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                      <div className="justify-content-center">{}</div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                      <div className="row justify-content-between">
+                        <div className="col-auto">
+                          <button
+                            className="btn btn-secondary btn btn-light"
+                            onClick={handleClose}
+                          >
+                            close
+                          </button>
+                        </div>
+                        <div className="col-auto">
+                          <div>
+                            <ModalsComponent />
+                          </div>
+                        </div>
+                      </div>
+                    </Modal.Footer>
+                  </Modal>
                 </div>
               </div>
             </div>
@@ -145,41 +152,13 @@ const AdminDaysOff = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      {period.map(({ userId }) => {
-                        return (
-                          <>
-                            <td>{userId}</td>
-                            {period.map(({ data }) => {
-                              return <td key={data._id}>{data.description}</td>;
-                            })}
-                          </>
-                        );
-                      })}
-
-                      <td>
-                        <div className="d-flex justify-content-center">
-                          <button
-                            form="request"
-                            className="btn btn-success"
-                            onClick={handleShowModalOne}
-                          >
-                            Accept
-                          </button>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="d-flex justify-content-center">
-                          <button
-                            form="request"
-                            className="btn btn-danger"
-                            onClick={handleShowModalTwo}
-                          >
-                            Reject
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
+                    {period.map((dayoff) => {
+                      return (
+                        <tr>
+                          <ListOfrequests dayoff={dayoff} />
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -187,76 +166,6 @@ const AdminDaysOff = () => {
           </div>
         </div>
       </div>
-
-      <Modal show={modalState === "modal-one"}>
-        <Modal.Header>
-          <Modal.Title> Acceptation Response : </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <form
-            onSubmit={handleSubmit(handleAccept)}
-            className="form-group row"
-            id="acceptationResponse"
-          >
-            <label className="form-label">message : </label>
-            <input
-              ref={register}
-              type="text"
-              name="reason"
-              className="form-control form-control-rounded mb-2"
-            />
-          </form>
-        </Modal.Body>
-        <Modal.Footer>
-          <div>
-            <button
-              className="btn btn-secondary btn btn-light"
-              onClick={handleClose}
-            >
-              close
-            </button>
-
-            <button
-              form="acceptationResponse"
-              className="btn btn-primary btn btn-info"
-            >
-              Send
-            </button>
-          </div>
-        </Modal.Footer>
-      </Modal>
-
-      <Modal show={modalState === "modal-two"}>
-        <Modal.Header>
-          <Modal.Title> Rejection Response : </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <form
-            onSubmit={handleSubmit(handleReject)}
-            className="form-group row"
-            id="rejectionResponse"
-          >
-            <label className="form-label">message : </label>
-            <input
-              ref={register}
-              type="text"
-              name="reason"
-              className="form-control form-control-rounded mb-2"
-            />
-          </form>
-        </Modal.Body>
-        <Modal.Footer>
-          <div>
-            <button className="btn btn-light" onClick={handleClose}>
-              close
-            </button>
-
-            <button form="rejectionResponse" className="btn btn-info">
-              Send
-            </button>
-          </div>
-        </Modal.Footer>
-      </Modal>
     </div>
   );
 };

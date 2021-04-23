@@ -4,7 +4,7 @@ import { Route, useHistory } from "react-router-dom";
 import { useTracker } from "meteor/react-meteor-data";
 
 const Authenticated = ({ path, component }) => {
-  const user = useTracker(() => Meteor.user());
+  const user = useTracker(() => Meteor.userId());
   const loading = useTracker(() => Meteor.loggingIn());
   const history = useHistory();
   const authenticatedPage = ["/dashboard","/admin-days-off"];

@@ -20,22 +20,26 @@ const createPeriod = function (data) {
   });
 };
 const readPeriod = function () {
-  return Daysoff.find({ userId: this.userId }).fetch();
+  return Daysoff.find({ userId: this.userId, response: null }).map((e) => ({
+    ...e,
+    user: Meteor.users.findOne({ _id: e.userId }),
+  }));
 };
 const deletePeriodRequest = function (_id) {
   Daysoff.remove({ _id, userId: this.userId });
 };
 
-const acceptDayOff = (_id)=>{
-  Daysoff.update({_id},{$set:{response:true}})
-}
-const rejectDayOff = ({_id,message})=>{
-  Daysoff.update({_id},{$set:{response:false,message}})
-}
+const acceptDayOff = (_id) => {
+  Daysoff.update({ _id }, { $set: { response: true } });
+};
+
+const rejectDayOff = ({ _id, message }) => {
+  Daysoff.update({ _id }, { $set: { response: false, message } });
+};
 Meteor.methods({
   createPeriod,
   readPeriod,
   deletePeriodRequest,
   acceptDayOff,
-  rejectDayOff
+  rejectDayOff,
 });
