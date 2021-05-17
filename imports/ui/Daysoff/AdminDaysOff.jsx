@@ -10,6 +10,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { useHistory } from "react-router-dom";
+import { useTracker } from 'meteor/react-meteor-data'
 
 const AdminDaysOff = () => {
   const [period, setPeriod] = useState([]);
@@ -22,11 +23,11 @@ const AdminDaysOff = () => {
   };
 
   const fetch = () => {
-    Meteor.call("readPeriod", (err, res) => {
+    Meteor.call("AdminReadPeriod", (err, res) => {
       setPeriod(res);
     });
   };
-  useEffect(() => {
+ useTracker(() => {
     fetch();
   }, []);
   const handleEventClick = (event) => {
@@ -35,18 +36,26 @@ const AdminDaysOff = () => {
 
   return (
     <div>
+    {fetch()}
       <div className="navbar navbar-dark">
         <div className="container-xl">
           <ul className="navbar-nav">
+            <li className="nav-item">
+              {Meteor.user() ? (
+                <p> welcome admin {Meteor.user()?.profile?.firstName}</p>
+              ) : undefined}
+            </li>
+          </ul>
+          {/*           <ul className="navbar-nav">
             <li className="nav-item">
               <a className="nav-link">
                 <span className="nav-link-title">List of users </span>
               </a>
             </li>
-          </ul>
+          </ul> */}
           <div className="navbar-nav flex-row order-md-last">
             <ul className="navbar-nav">
-              <li className="nav-item"></li>
+              <li className="nav-item"> </li>
             </ul>
           </div>
           <div className="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
@@ -96,7 +105,7 @@ const AdminDaysOff = () => {
                       title: data.description,
                       start: data.startdate,
                       end: data.enddate,
-                      allDay: false,
+                      allDay: true,
                       extendedProps: data,
                     }))}
                     eventClick={handleEventClick}
@@ -131,7 +140,7 @@ const AdminDaysOff = () => {
                         </div>
                         <div className="col-auto">
                           <div>
-                            <ModalsComponent />
+                            <ModalsComponent key={period._id} />
                           </div>
                         </div>
                       </div>
@@ -141,7 +150,7 @@ const AdminDaysOff = () => {
               </div>
             </div>
             <div className="tab-pane active" id="req">
-              <div className="container my-md-3">
+              <div className="container w-75 p-3 h-75">
                 <table className="table table-bordered">
                   <thead>
                     <tr>

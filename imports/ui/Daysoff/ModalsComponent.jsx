@@ -33,7 +33,7 @@ const ModalsComponent = ({ dayoff }) => {
   };
 
   const fetch = () => {
-    Meteor.call("readPeriod", (err, res) => {
+    Meteor.call("AdminReadPeriod", (err, res) => {
       setPeriod(res);
     });
   };

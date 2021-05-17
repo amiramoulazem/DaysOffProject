@@ -5,10 +5,22 @@ export default Daysoff = new Mongo.Collection("daysoff");
 
 if (Meteor.isServer) {
   Meteor.publish("daysoff", function () {
-    Daysoff.find({ userId: this.userId });
+   return Daysoff.find({ userId: this.userId });
   });
 }
+if(Meteor.isClient){
+ Meteor.subscribe('daysoff')
+/*handler.ready();
+  Tracker.autorun(()=>{
+      if (subsciption.ready()){
+     data = Daysoff.find().fetch();
+  }
+  })
+ */
+ }; 
+  
 
+ 
 const createPeriod = function (data) {
   if (!this.userId) {
     throw new Meteor.Error("not authorized");
@@ -19,15 +31,21 @@ const createPeriod = function (data) {
     userId: this.userId,
   });
 };
-const readPeriod = function () {
-  return Daysoff.find({ userId: this.userId, response: null }).map((e) => ({
+const UserReadPeriod = function () {
+  return Daysoff.find({ userId: this.userId }).map((e) => ({
     ...e,
     user: Meteor.users.findOne({ _id: e.userId }),
   }));
 };
-const deletePeriodRequest = function (_id) {
-  Daysoff.remove({ _id, userId: this.userId });
+const AdminReadPeriod = function () {
+  return Daysoff.find({ response: { $exists: false } }).map((e) => ({
+    ...e,
+    user: Meteor.users.findOne({ _id: e.userId }),
+  }));
 };
+/* const deletePeriodRequest = function (_id) {
+  Daysoff.remove({ _id, userId: this.userId });
+}; */
 
 const acceptDayOff = (_id) => {
   Daysoff.update({ _id }, { $set: { response: true } });
@@ -38,8 +56,9 @@ const rejectDayOff = ({ _id, message }) => {
 };
 Meteor.methods({
   createPeriod,
-  readPeriod,
-  deletePeriodRequest,
+  UserReadPeriod,
+  /* deletePeriodRequest, */
   acceptDayOff,
   rejectDayOff,
+  AdminReadPeriod,
 });

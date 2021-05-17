@@ -16,6 +16,7 @@ const Dashboard = () => {
     Accounts.logout();
   };
 
+
   return (
     <div>
       <div className="navbar navbar-dark">

@@ -29,7 +29,12 @@ function Login() {
         notyf.error({ message: "unable to login. check email or password" });
       }
 
-      history.push("/dashboard");
+      var logged = Meteor.userId();
+      if (Roles.userIsInRole(logged, "user")) {
+        history.push("/dashboard");
+      } else if (Roles.userIsInRole(logged, "admin")) {
+        history.push("/admin-days-off");
+      }
     });
   };
 

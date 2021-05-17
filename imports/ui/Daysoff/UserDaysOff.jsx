@@ -1,27 +1,35 @@
 import React, { useEffect, useState } from "react";
 
+import { DaysOff } from "../../api/daysoff";
+import { Dropdown } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import FullCalendar from "@fullcalendar/react";
+import { Meteor } from "meteor/meteor";
 import Modal from "react-bootstrap/Modal";
-import { Notyf } from "notyf";
+import Notifications from "./Notifications";
+import { Tracker } from "meteor/tracker";
 import { dateschema } from "../../schema-validation/daysoff-schema";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import daysoff from "../../api/daysoff";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import interactionPlugin from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { useForm } from "react-hook-form";
+import { useTracker } from "meteor/react-meteor-data";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-const DaysOff = () => {
-  const notyf = new Notyf({
+const UserDaysOff = () => {
+  Tracker.autorun(function () {
+    Meteor.subscribe("daysoff");
+  });
+
+  /*   const notyf = new Notyf({
     duration: 2000,
     position: {
       x: "center",
       y: "top",
     },
-  });
+  }); */
 
   const { register, handleSubmit, err } = useForm({
     resolver: yupResolver(dateschema),
@@ -31,7 +39,7 @@ const DaysOff = () => {
   const [date, setDate] = useState("");
   const [finalDate, setFinalDate] = useState("");
   const [show, setShow] = useState(false);
-
+  /* const [showspan , setShowspan] = useState(true) */
   handleDateClick = (DateClickInfo) => {
     setDate(DateClickInfo.dateStr);
     setFinalDate(DateClickInfo.dateStr);
@@ -47,7 +55,6 @@ const DaysOff = () => {
   };
 
   const onSubmit = (data) => {
-    console.log("here");
     Meteor.call("createPeriod", { data }, (e) => {
       if (!e) {
         setShow(false);
@@ -57,11 +64,11 @@ const DaysOff = () => {
   };
 
   const fetch = () => {
-    Meteor.call("readPeriod", (err, data) => {
+    Meteor.call("UserReadPeriod", (err, data) => {
       setPeriod(data);
     });
   };
-  useEffect(() => {
+  useTracker(() => {
     fetch();
   }, []);
   return (
@@ -73,48 +80,21 @@ const DaysOff = () => {
               <li className="nav-item"></li>
             </ul>
           </div>
-          <a
-            className="nav-link dropdown-toggle waves-effect waves-light"
-            id="navbarDropdownMenuLink-5"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="true"
-          >
-            <span className="badge badge-danger ml-2"></span>
-
-            <FontAwesomeIcon icon={faBell} />
-          </a>
-          <div
-            className="dropdown-menu dropdown-menu-lg-right dropdown-secondary"
-            aria-labelledby="navbarDropdownMenuLink-5"
-          >
-            <a className="dropdown-item waves-effect waves-light" href="#">
-              Action <span className="badge badge-danger ml-2">4</span>
-            </a>
-            <a className="dropdown-item waves-effect waves-light" href="#">
-              Another action <span className="badge badge-danger ml-2">1</span>
-            </a>
-            <a className="dropdown-item waves-effect waves-light" href="#">
-              Something else here{" "}
-              <span className="badge badge-danger ml-2">4</span>
-            </a>
-          </div>
-        </div>
-        {/*  <ul className="navbar-nav ml-auto nav-flex-icons">
-          <li className="nav-item avatar dropdown">
-            <a className="nav-link dropdown-toggle waves-effect waves-light" id="navbarDropdownMenuLink-5" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-              <span className="badge badge-danger ml-2">4</span>
+          <Dropdown>
+            <Dropdown.Toggle variant="success" id="dropdown-basic">
               <FontAwesomeIcon icon={faBell} />
-            </a>
-            <div className="dropdown-menu dropdown-menu-lg-right dropdown-secondary" aria-labelledby="navbarDropdownMenuLink-5">
-              <a className="dropdown-item waves-effect waves-light" href="#">Action <span className="badge badge-danger ml-2">4</span></a>
-              <a className="dropdown-item waves-effect waves-light" href="#">Another action <span className="badge badge-danger ml-2">1</span></a>
-              <a className="dropdown-item waves-effect waves-light" href="#">Something else here <span className="badge badge-danger ml-2">4</span></a>
-            </div>
-          </li>
-        </ul>  */}
+              {/* <span className="badge badge-danger">{period.length}</span> */}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+              {period.map((dayoff) => {
+                return <Notifications dayoff={dayoff} />;
+              })}
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
       </div>
-      <div className="container h-50">
+      <div className="container w-50 p-3 h-40">
         <FullCalendar
           initialView="dayGridMonth"
           plugins={[
@@ -139,10 +119,10 @@ const DaysOff = () => {
           }))}
           displayEventTime={false}
           select={handleDateSelect}
-          dayMaxEventRows={true} // for all non-TimeGrid views
+          dayMaxEventRows={true}
           views={
             (timeGrid = {
-              dayMaxEventRows: 4, // adjust to 4 only for timeGridWeek/timeGridDay
+              dayMaxEventRows: 4,
             })
           }
           eventColor="purple"
@@ -206,4 +186,4 @@ const DaysOff = () => {
   );
 };
 
-export default DaysOff;
+export default UserDaysOff;
