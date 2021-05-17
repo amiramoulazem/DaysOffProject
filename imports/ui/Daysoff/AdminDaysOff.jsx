@@ -92,7 +92,7 @@ const AdminDaysOff = () => {
           <div className="tab-content">
             <div className="tab-pane active show" id="calendar">
               <div>
-                <div className="container w-75 p-3 h-50">
+                <div className="container w-50  h-50">
                   <FullCalendar
                     editable={true}
                     initialView="dayGridMonth"
