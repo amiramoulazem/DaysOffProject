@@ -19,17 +19,10 @@ import { useTracker } from "meteor/react-meteor-data";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 const UserDaysOff = () => {
+ 
   Tracker.autorun(function () {
-    Meteor.subscribe("daysoff");
+    Meteor.subscribe('dayoff')
   });
-
-  /*   const notyf = new Notyf({
-    duration: 2000,
-    position: {
-      x: "center",
-      y: "top",
-    },
-  }); */
 
   const { register, handleSubmit, err } = useForm({
     resolver: yupResolver(dateschema),
@@ -71,6 +64,14 @@ const UserDaysOff = () => {
   useTracker(() => {
     fetch();
   }, []);
+  const [showBadge, setShowBadge] = useState({
+    show:false,
+    count:0
+  });
+  const handleClick=()=>{
+   setShowBadge({show:true,count:0})
+   console.log(showBadge)
+  }
   return (
     <div>
       <div className="navbar navbar-dark">
@@ -81,14 +82,15 @@ const UserDaysOff = () => {
             </ul>
           </div>
           <Dropdown>
-            <Dropdown.Toggle variant="success" id="dropdown-basic">
-              <FontAwesomeIcon icon={faBell} />
-              {/* <span className="badge badge-danger">{period.length}</span> */}
+            <Dropdown.Toggle variant="success" id="dropdown-basic" >
+              <FontAwesomeIcon icon={faBell}/>
+              {showBadge==false ? <span className="badge badge-danger">{count}</span>:undefined}
+              
             </Dropdown.Toggle>
 
-            <Dropdown.Menu>
+            <Dropdown.Menu onClick={handleClick}>
               {period.map((dayoff) => {
-                return <Notifications dayoff={dayoff} />;
+                return <Notifications key={dayoff._id} dayoff={dayoff} />;
               })}
             </Dropdown.Menu>
           </Dropdown>

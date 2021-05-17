@@ -40,11 +40,13 @@ const AdminDaysOff = () => {
       <div className="navbar navbar-dark">
         <div className="container-xl">
           <ul className="navbar-nav">
+            <br/>
             <li className="nav-item">
               {Meteor.user() ? (
                 <p> welcome admin {Meteor.user()?.profile?.firstName}</p>
               ) : undefined}
             </li>
+            
           </ul>
           {/*           <ul className="navbar-nav">
             <li className="nav-item">
@@ -90,7 +92,7 @@ const AdminDaysOff = () => {
           <div className="tab-content">
             <div className="tab-pane active show" id="calendar">
               <div>
-                <div className="container w-75 p-3 h-75">
+                <div className="container w-75 p-3 h-50">
                   <FullCalendar
                     editable={true}
                     initialView="dayGridMonth"
@@ -121,6 +123,7 @@ const AdminDaysOff = () => {
                       })
                     }
                   />
+                  <div className="hr-text text-primary"> table of requests</div>
                   <Modal show={show}>
                     <Modal.Header>
                       <Modal.Title> more informations </Modal.Title>

@@ -32,7 +32,7 @@ const createPeriod = function (data) {
   });
 };
 const UserReadPeriod = function () {
-  return Daysoff.find({ userId: this.userId }).map((e) => ({
+  return Daysoff.find({ userId: this.userId },{sort: { _id: 1 }, limit: 3 }).map((e) => ({
     ...e,
     user: Meteor.users.findOne({ _id: e.userId }),
   }));
