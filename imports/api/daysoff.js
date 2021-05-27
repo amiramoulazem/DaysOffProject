@@ -5,22 +5,14 @@ export default Daysoff = new Mongo.Collection("daysoff");
 
 if (Meteor.isServer) {
   Meteor.publish("daysoff", function () {
-   return Daysoff.find({ userId: this.userId });
+    return Daysoff.find({ userId: this.userId });
   });
 }
-if(Meteor.isClient){
- Meteor.subscribe('daysoff')
-/*handler.ready();
-  Tracker.autorun(()=>{
-      if (subsciption.ready()){
-     data = Daysoff.find().fetch();
-  }
-  })
- */
- }; 
-  
+if (Meteor.isClient) {
+  Meteor.subscribe("daysoff");
 
- 
+}
+
 const createPeriod = function (data) {
   if (!this.userId) {
     throw new Meteor.Error("not authorized");
@@ -32,7 +24,10 @@ const createPeriod = function (data) {
   });
 };
 const UserReadPeriod = function () {
-  return Daysoff.find({ userId: this.userId },{sort: { _id: 1 }, limit: 3 }).map((e) => ({
+  return Daysoff.find(
+    { userId: this.userId },
+    { sort: { _id: 1 }, limit: 5 }
+  ).map((e) => ({
     ...e,
     user: Meteor.users.findOne({ _id: e.userId }),
   }));

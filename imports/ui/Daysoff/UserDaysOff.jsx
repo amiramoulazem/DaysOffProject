@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
+import { faBell, faLessThanEqual } from "@fortawesome/free-solid-svg-icons";
 
+import Badge from "@material-ui/core/Badge";
+import BellIcon from "react-bell-icon";
 import { DaysOff } from "../../api/daysoff";
 import { Dropdown } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import FullCalendar from "@fullcalendar/react";
+import MailIcon from "@material-ui/icons/Mail";
 import { Meteor } from "meteor/meteor";
 import Modal from "react-bootstrap/Modal";
 import Notifications from "./Notifications";
 import { Tracker } from "meteor/tracker";
 import { dateschema } from "../../schema-validation/daysoff-schema";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import { faBell } from "@fortawesome/free-solid-svg-icons";
 import interactionPlugin from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -19,10 +22,8 @@ import { useTracker } from "meteor/react-meteor-data";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 const UserDaysOff = () => {
- 
-  Tracker.autorun(function () {
-    Meteor.subscribe('dayoff')
-  });
+  
+  
 
   const { register, handleSubmit, err } = useForm({
     resolver: yupResolver(dateschema),
@@ -32,7 +33,7 @@ const UserDaysOff = () => {
   const [date, setDate] = useState("");
   const [finalDate, setFinalDate] = useState("");
   const [show, setShow] = useState(false);
-  /* const [showspan , setShowspan] = useState(true) */
+
   handleDateClick = (DateClickInfo) => {
     setDate(DateClickInfo.dateStr);
     setFinalDate(DateClickInfo.dateStr);
@@ -65,13 +66,13 @@ const UserDaysOff = () => {
     fetch();
   }, []);
   const [showBadge, setShowBadge] = useState({
-    show:false,
-    count:0
+    show: false,
+    count: 0,
   });
-  const handleClick=()=>{
-   setShowBadge({show:true,count:0})
-   console.log(showBadge)
-  }
+  const handleClick = () => {
+    setShowBadge({ show: true, count: 0 });
+    console.log(showBadge);
+  };
   return (
     <div>
       <div className="navbar navbar-dark">
@@ -82,10 +83,19 @@ const UserDaysOff = () => {
             </ul>
           </div>
           <Dropdown>
-            <Dropdown.Toggle variant="success" id="dropdown-basic" >
-              <FontAwesomeIcon icon={faBell}/>
-              {showBadge==false ? <span className="badge badge-danger">{count}</span>:undefined}
-              
+            <Dropdown.Toggle variant="success" id="dropdown-basic">
+              <Badge  badgeContent={+1} color="secondary">
+                <BellIcon
+                  width="20"
+                  height="20"
+                  color="white"
+                  active={true}
+                  animate={true}
+                />
+              </Badge>
+              {showBadge == false ? (
+                <Badge badgeContent={count}></Badge>
+              ) : undefined}
             </Dropdown.Toggle>
 
             <Dropdown.Menu onClick={handleClick}>

@@ -65,7 +65,10 @@ function Login() {
                     <div className="alert alert-danger" role="alert">
                       <div className="d-flex">
                         <div>
-                          <div className="text-muted"> {errors.email?.message}</div>
+                          <div className="text-muted">
+                            {" "}
+                            {errors.email?.message}
+                          </div>
                         </div>
                       </div>
                     </div>

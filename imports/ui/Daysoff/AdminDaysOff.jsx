@@ -10,7 +10,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { useHistory } from "react-router-dom";
-import { useTracker } from 'meteor/react-meteor-data'
+import { useTracker } from "meteor/react-meteor-data";
 
 const AdminDaysOff = () => {
   const [period, setPeriod] = useState([]);
@@ -27,7 +27,7 @@ const AdminDaysOff = () => {
       setPeriod(res);
     });
   };
- useTracker(() => {
+  useTracker(() => {
     fetch();
   }, []);
   const handleEventClick = (event) => {
@@ -36,25 +36,18 @@ const AdminDaysOff = () => {
 
   return (
     <div>
-    {fetch()}
+      {fetch()}
       <div className="navbar navbar-dark">
         <div className="container-xl">
           <ul className="navbar-nav">
-            <br/>
+            <br />
             <li className="nav-item">
               {Meteor.user() ? (
                 <p> welcome admin {Meteor.user()?.profile?.firstName}</p>
               ) : undefined}
             </li>
-            
           </ul>
-          {/*           <ul className="navbar-nav">
-            <li className="nav-item">
-              <a className="nav-link">
-                <span className="nav-link-title">List of users </span>
-              </a>
-            </li>
-          </ul> */}
+
           <div className="navbar-nav flex-row order-md-last">
             <ul className="navbar-nav">
               <li className="nav-item"> </li>
