@@ -8,7 +8,7 @@ const Authorized = ({ path, component }) => {
   const authenticatedPage = ["/dashboard" ,"/admin-days-off"];
   const unAuthenticatedPage = ["/", "/register"];
   const isAuthenticatedPage = authenticatedPage.includes(path);
-  const isUnauthenticatedPage = umeteornAuthenticatedPage.includes(path);
+  const isUnauthenticatedPage = unAuthenticatedPage.includes(path);
   const history = useHistory();
   useEffect(() => {
     if (user && isUnauthenticatedPage) {
